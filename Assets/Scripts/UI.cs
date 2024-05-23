@@ -1,38 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class UI : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
     public void StartGame()
     {
-        SceneManager.LoadScene("Scene1");
+        SceneManager.LoadScene(Constants.Scene1);
     }
 
     public void Settings()
     {
-        SceneManager.LoadScene("Settings");
+        SceneManager.LoadScene(Constants.Settings);
     }
 
-    public void Conrtols()
+    public void Controls()
     {
-        SceneManager.LoadScene("Controls");
+        SceneManager.LoadScene(Constants.Controls);
     }
 
     public void Menu()
     {
-        SceneManager.LoadScene("Menu");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        SceneManager.LoadScene(Constants.Menu);
     }
 }

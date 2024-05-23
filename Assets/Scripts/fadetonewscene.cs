@@ -1,63 +1,42 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class fadetonewscene : MonoBehaviour
+public class FadeToNewScene : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private string _nextScene;
 
-    public string nextScene;
+    [SerializeField] private Canvas _canvas;
+    [SerializeField] private float _fadingSpeed = 3f;
 
-    public Canvas canvas;
-    public float fadingSpeed = 3f;
-
-    private bool stopFading = false;
-    private float desiredAlpha;
-
-
-    // when the GameObjects collider arrange for this GameObject
-
+    private bool _stopFading;
+    private float _desiredAlpha = 1.0f;
+    private Coroutine _coroutine;
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        StartCoroutine(OverAllTime(fadingSpeed));
- 
-        
+        _coroutine =  StartCoroutine(OverAllTime(_fadingSpeed));
     }
 
-    void Start()
+    void GoToNextScene()
     {
-        
+        SceneManager.LoadScene(_nextScene);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    void Gototscene()
-    {
-        SceneManager.LoadScene(nextScene);
-    }
-
-
 
     IEnumerator CanvasAlphaChangeOverTime(Canvas canvas, float duration)
     {
-        var alphaColor = canvas.GetComponent<CanvasGroup>().alpha;
-        desiredAlpha = 1.0f;
+        if (!canvas.TryGetComponent(out CanvasGroup canvasGroup)) yield break;
 
-      
+        var alphaColor = canvasGroup.alpha;
 
         while (true)
         {
-            alphaColor = Mathf.MoveTowards(alphaColor, desiredAlpha, 2.0f * Time.deltaTime);
-            canvas.GetComponent<CanvasGroup>().alpha = alphaColor;
+            alphaColor = Mathf.MoveTowards(alphaColor, _desiredAlpha, 2.0f * Time.deltaTime);
+            canvasGroup.alpha = alphaColor;
 
-            if (stopFading == true)
+            if (_stopFading)
             {
-                break;
+                yield break;
             }
 
             yield return null;
@@ -66,14 +45,13 @@ public class fadetonewscene : MonoBehaviour
 
     IEnumerator OverAllTime(float time)
     {
-        StartCoroutine(CanvasAlphaChangeOverTime(canvas, fadingSpeed));
+        StartCoroutine(CanvasAlphaChangeOverTime(_canvas, _fadingSpeed));
 
         yield return new WaitForSeconds(time);
 
-        stopFading = true;
-        StopCoroutine("CanvasAlphaChangeOverTime");
+        _stopFading = true;
+        StopCoroutine(_coroutine);
 
-        Gototscene();
+        GoToNextScene();
     }
-
 }
