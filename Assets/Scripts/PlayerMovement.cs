@@ -8,10 +8,16 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D  myRigidbody;
     private Vector3 change;
     private Animator animator;
+    public GameObject SceneTrigger;
     void Start()
     {
         animator = GetComponent<Animator>();
         myRigidbody = GetComponent<Rigidbody2D>();
+    }
+
+    void scenechangetrigger()
+    {
+       // GameObject.Find
     }
 
     
@@ -42,4 +48,21 @@ public class PlayerMovement : MonoBehaviour
         myRigidbody.MovePosition(
             transform.position + change.normalized * speed * Time.deltaTime);
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Note" && collision.gameObject.GetComponent <PopUpSystem> ().isbeinginteractedwith == false)
+        {
+            collision.gameObject.GetComponent<PopUpSystem>().activeinteract();
+
+
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+
+    }
+
+
 }
