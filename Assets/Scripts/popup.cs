@@ -1,15 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class popup : MonoBehaviour
+public class Popup : MonoBehaviour
 {
-    public GameObject popupPanal;
-
-
-    public void closewindow()
+    [SerializeField] private GameObject _popupPanel;
+    
+    public void CloseWindow()
     {
-        popupPanal.SetActive(false);
-
+        _popupPanel.SetActive(false);
     }
 }

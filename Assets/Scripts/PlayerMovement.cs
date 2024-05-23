@@ -1,68 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D)), RequireComponent(typeof(Animator)), DisallowMultipleComponent]
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed;
-    private Rigidbody2D  myRigidbody;
-    private Vector3 change;
-    private Animator animator;
-    public GameObject SceneTrigger;
-    void Start()
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private GameObject _sceneTrigger;
+
+
+    private Rigidbody2D _rigidbody;
+    private Vector2 _input;
+    private Animator _animator;
+
+    private void Start()
     {
-        animator = GetComponent<Animator>();
-        myRigidbody = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
-    void scenechangetrigger()
+    private void SceneChangeTrigger()
     {
-       // GameObject.Find
+        // GameObject.Find
     }
 
-    
-    void Update()
+    private void Update()
     {
-        change = Vector3.zero;
-        change.x = Input.GetAxisRaw("Horizontal");
-        change.y = Input.GetAxisRaw("Vertical");
-        UpdateAnimationAndMove();
+        _input = GetInput();
+        MoveCharacter(_input, _moveSpeed);
+        UpdateAnimations();
     }
 
-    void UpdateAnimationAndMove()
-    { 
-              if (change != Vector3.zero)
-        {
-            MoveCharacter();
-    animator.SetFloat("moveX", change.x);
-            animator.SetFloat("moveY", change.y);
-            animator.SetBool("moving", true);
-        }
-        else
-{
-    animator.SetBool("moving", false);
-}
-    }
-    void MoveCharacter()
+    private Vector2 GetInput()
     {
-        myRigidbody.MovePosition(
-            transform.position + change.normalized * speed * Time.deltaTime);
+        Vector2 input;
+        input.x = Input.GetAxisRaw("Horizontal");
+        input.y = Input.GetAxisRaw("Vertical");
+        return input;
+    }
+
+    private void UpdateAnimations()
+    {
+        _animator.SetFloat(Constants.moveX, _input.x);
+        _animator.SetFloat(Constants.moveY, _input.y);
+    }
+
+    private void MoveCharacter(Vector2 input, float speed)
+    {
+        _rigidbody.velocity = input * speed;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Note" && collision.gameObject.GetComponent <PopUpSystem> ().isbeinginteractedwith == false)
+        if (collision.TryGetComponent(out Note _) && collision.TryGetComponent(out PopUpSystem popUpSystem))
         {
-            collision.gameObject.GetComponent<PopUpSystem>().activeinteract();
-
-
+            popUpSystem.ActivateInteraction();
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-
     }
-
-
 }
